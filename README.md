@@ -1,0 +1,4 @@
+getweather
+==========
+
+Gets the weather
