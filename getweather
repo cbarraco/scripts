@@ -1,0 +1,65 @@
+#!/bin/python2
+# -*- coding: utf-8 -*-
+
+import requests
+import json
+import argparse
+
+# Parse all the arguments
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-l", "--location",
+    nargs='?',
+    help="Location of weather data (default is Waterloo Ontario Canada)")
+parser.add_argument(
+    "-s", "--separator",
+    nargs='?',
+    help="Separator between information (default is '|')")
+parser.add_argument(
+    "-i", "--imperial",
+    help="Set measurement system for all units to imperial (default is metric)",
+    action="store_true")
+parser.add_argument(
+    "-d", "--detailed",
+    help="Shows a more detailed description of the current weather",
+    action="store_true")
+parser.add_argument(
+    "-w", "--windspeed",
+    help="Show wind data in output",
+    action="store_true")
+parser.add_argument(
+    "-t", "--temperature",
+    help="Show temperature data in output",
+    action="store_true")
+args = parser.parse_args()
+
+# Get the json data from OpenWeatherMap
+if str(args.location) == "None":
+    args.location = "Waterloo Ontario Canada"
+url = "http://api.openweathermap.org/data/2.5/weather?q="+str(args.location)
+data = requests.get(url).content
+decoded = json.loads(data)
+
+# Format the output
+if args.detailed:
+    output = decoded['weather'][0]['description'].capitalize()
+else:
+    output = decoded['weather'][0]['main']
+if str(args.separator) == "None":
+    args.separator = "|"
+if args.temperature:
+    temp = decoded['main']['temp'] - 273.15
+    if args.imperial:
+        temp = temp * 1.8 + 32
+        output += args.separator+'Temp:'+str(temp)+u'°F'
+    else:
+        output += args.separator+'Temp:'+str(temp)+u'°C'
+if args.windspeed:
+    windspeed = decoded['wind']['speed'] * 3600 / 1000
+    if args.imperial:
+        windspeed = windspeed * 1.60934
+        output += args.separator+'Wind:'+str(windspeed)+'mph'
+    else:
+        output += args.separator+'Wind:'+str(windspeed)+'kph'
+output.encode('utf8')
+print output
