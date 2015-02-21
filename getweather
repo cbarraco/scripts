@@ -57,7 +57,7 @@ if args.temperature:
 if args.windspeed:
     windspeed = decoded['wind']['speed'] * 3600 / 1000
     if args.imperial:
-        windspeed = windspeed * 1.60934
+        windspeed = windspeed * 1.61
         output += args.separator+'Wind:'+str(windspeed)+'mph'
     else:
         output += args.separator+'Wind:'+str(windspeed)+'kph'
