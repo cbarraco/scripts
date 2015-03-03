@@ -10,27 +10,35 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "-l", "--location",
     nargs='?',
-    help="Location of weather data (default is Waterloo Ontario Canada)")
+    help="Location of weather data. Default is 'Waterloo Ontario Canada'.")
 parser.add_argument(
     "-s", "--separator",
     nargs='?',
-    help="Separator between information (default is ' ')")
+    help="Separator between information. Default is ' '.")
 parser.add_argument(
     "-i", "--imperial",
-    help="Set measurement system for all units to imperial (default is metric)",
+    help="Set measurement system for all units to imperial. Default is metric.",
     action="store_true")
 parser.add_argument(
     "-d", "--detailed",
-    help="Shows a more detailed description",
+    help="Shows a more detailed description.",
     action="store_true")
 parser.add_argument(
     "-w", "--windspeed",
-    help="Show wind data in output",
+    help="Show wind data in output.",
     action="store_true")
 parser.add_argument(
     "-t", "--temperature",
-    help="Show temperature data in output",
+    help="Show temperature data in output.",
     action="store_true")
+parser.add_argument(
+    "-W", "--windtitle",
+    nargs='?',
+    help="Put a message before the windspeed (eg: 'WS:'). Default is nothing.")
+parser.add_argument(
+    "-T", "--temptitle",
+    nargs='?',
+    help="Put a message before the temperature (eg: 'T:'). Default is nothing.")
 args = parser.parse_args()
 
 # Set the default values if none were provided
@@ -38,6 +46,10 @@ if str(args.location) == "None":
     args.location = "Waterloo Ontario Canada"
 if str(args.separator) == "None":
     args.separator = " "
+if str(args.temptitle) == "None":
+    args.temptitle = ""
+if str(args.windtitle) == "None":
+    args.windtitle = ""
 
 # Get the json data from OpenWeatherMap
 url = "http://api.openweathermap.org/data/2.5/weather?q="+str(args.location)
@@ -53,14 +65,14 @@ if args.temperature:
     temp = decoded['main']['temp'] - 273.15
     if args.imperial:
         temp = temp * 1.8 + 32
-        output += args.separator+str(round(temp,1))+'F'
+        output += args.separator+args.temptitle+str(round(temp,1))+'F'
     else:
-        output += args.separator+str(round(temp,1))+'C'
+        output += args.separator+args.temptitle+str(round(temp,1))+'C'
 if args.windspeed:
     windspeed = decoded['wind']['speed'] * 3600 / 1000
     if args.imperial:
         windspeed = windspeed * 1.61
-        output += args.separator+str(round(windspeed,1))+'mph'
+        output += args.separator+args.windtitle+str(round(windspeed,1))+'mph'
     else:
-        output += args.separator+str(round(windspeed,1))+'kph'
+        output += args.separator+args.windtitle+str(round(windspeed,1))+'kph'
 print(output)
