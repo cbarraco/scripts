@@ -20,13 +20,23 @@ usage: getweather [-h] [-l [LOCATION]] [-s [SEPARATOR]] [-i] [-d] [-w] [-t]
 
 optional arguments:
   -h, --help            show this help message and exit
+  
   -l [LOCATION], --location [LOCATION]
+  
                         Location of weather data (default is Waterloo Ontario
+                        
                         Canada)
+                        
   -s [SEPARATOR], --separator [SEPARATOR]
+  
                         Separator between information (default is ' ')
+                        
   -i, --imperial        Set measurement system for all units to imperial
+  
                         (default is metric)
+                        
   -d, --detailed        Shows a more detailed description
+  
   -w, --windspeed       Show wind data in output
+  
   -t, --temperature     Show temperature data in output
