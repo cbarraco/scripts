@@ -23,10 +23,6 @@ Usage
 -----
 usage: getweather [-h] [-f [FORMAT]] [-l [LOCATION]] [-i]
 
-getweather
-
-optional arguments:
-
   -h, --help
   
   	show this help message and exit
