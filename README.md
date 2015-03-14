@@ -15,7 +15,7 @@ If you get an error saying you don't have one of those modules, install it with 
 
 Installation
 ------------
-Make sure getweather is executable and copy it to /usr/bin to access it anywhere, ie:
+Make sure getweather is executable and copy it to /usr/local/bin to access it anywhere, ie:
 	
 	chmod a+x ./getweather && sudo cp ./getweather /usr/local/bin/
 
