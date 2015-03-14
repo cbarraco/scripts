@@ -27,24 +27,23 @@ getweather
 
 optional arguments:
 
-  -h, --help            show this help message and exit
+  -h, --help
+  
+  	show this help message and exit
   
   -f [FORMAT], --format [FORMAT]
-  
-                        Format string for output.
-                        
-                            %d - description of current weather (eg:'Light rain')
-                            
-                            %t - current temperature (eg: '4')
-                            
-                            %w - current wind speed (eg: '5')
-                            
-                            %h - current humidity (eg: '90%')
-                            
-                            %p - current chance of precipitation (eg: '50%')
+  	
+  	Format string for output.
+        %d - description of current weather (eg:'Light rain')
+        %t - current temperature (eg: '4')
+        %w - current wind speed (eg: '5')
+        %h - current humidity (eg: '90%')
+        %p - current chance of precipitation (eg: '50%')
                             
   -l [LOCATION], --location [LOCATION]
+  	
+  	Location of weather data. Default is 'Waterloo+Ontario'. Must be formatted for use in a URL.
+  	
+  -i, --imperial
   
-                        Location of weather data. Default is 'Waterloo+Ontario'. Must be formatted for use in a URL.
-                        
-  -i, --imperial        Set measurement system for all units to imperial. Default is metric.
+  	Set measurement system for all units to imperial. Default is metric.
