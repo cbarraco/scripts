@@ -45,18 +45,18 @@ if str(args.format) == "None":
     args.format = u"%d %t.0C"
 
 # Parse the HTML
-html = br.open("https://www.google.ca/search?q=weather+"+args.location).read()
+html = br.open("https://www.google.com/search?q=weather+"+args.location).read()
 soup = BeautifulSoup(html, "lxml") 
 description = soup.find('span', id="wob_dc").string
 humidity = soup.find('span', id="wob_hm").string
 precipiation = soup.find('span', id="wob_pp").string
 if args.imperial:
-    temperature = soup.find('span', id="wob_ttm").string
-    windspeed = soup.find('span', id="wob_tws").string
-    windspeed = windspeed.split(' ')[0]
-else:
     temperature = soup.find('span', id="wob_tm").string
     windspeed = soup.find('span', id="wob_ws").string
+    windspeed = windspeed.split(' ')[0]
+else:
+    temperature = soup.find('span', id="wob_ttm").string
+    windspeed = soup.find('span', id="wob_tws").string
     windspeed = windspeed.split(' ')[0]
 
 # Format and print the output
