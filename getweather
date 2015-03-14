@@ -1,78 +1,69 @@
 #!/bin/python2
 # -*- coding: utf-8 -*-
 
-import requests
-import json
 import argparse
+from argparse import RawTextHelpFormatter
+import mechanize
+from bs4 import BeautifulSoup
+
+# Init mechanize
+br = mechanize.Browser()
+br.set_handle_equiv(True)
+br.set_handle_gzip(True)
+br.set_handle_redirect(True)
+br.set_handle_referer(True)
+br.set_handle_robots(False)
+br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=1)
+br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:36.0) Gecko/20100101 Firefox/36.0')]
 
 # Parse all the arguments
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description='getweather', formatter_class=RawTextHelpFormatter)
+format_help="""Format string for output.
+    %%d - description of current weather (eg:'Light rain')
+    %%t - current temperature (eg: '4')
+    %%w - current wind speed (eg: '5')
+    %%h - current humidity (eg: '90%%')
+    %%p - current chance of precipitation (eg: '50%%')"""
+parser.add_argument(
+    "-f", "--format",
+    nargs='?',
+    help=format_help)
 parser.add_argument(
     "-l", "--location",
     nargs='?',
-    help="Location of weather data. Default is 'Waterloo Ontario Canada'.")
-parser.add_argument(
-    "-s", "--separator",
-    nargs='?',
-    help="Separator between information. Default is ' '.")
+    help="Location of weather data. Default is 'Waterloo+Ontario'. Must be formatted for use in a URL.")
 parser.add_argument(
     "-i", "--imperial",
     help="Set measurement system for all units to imperial. Default is metric.",
     action="store_true")
-parser.add_argument(
-    "-d", "--detailed",
-    help="Shows a more detailed description.",
-    action="store_true")
-parser.add_argument(
-    "-w", "--windspeed",
-    help="Show wind data in output.",
-    action="store_true")
-parser.add_argument(
-    "-t", "--temperature",
-    help="Show temperature data in output.",
-    action="store_true")
-parser.add_argument(
-    "-W", "--windtitle",
-    nargs='?',
-    help="Put a message before the windspeed (eg: 'WS:'). Default is nothing.")
-parser.add_argument(
-    "-T", "--temptitle",
-    nargs='?',
-    help="Put a message before the temperature (eg: 'T:'). Default is nothing.")
 args = parser.parse_args()
 
 # Set the default values if none were provided
 if str(args.location) == "None":
-    args.location = "Waterloo Ontario Canada"
-if str(args.separator) == "None":
-    args.separator = " "
-if str(args.temptitle) == "None":
-    args.temptitle = ""
-if str(args.windtitle) == "None":
-    args.windtitle = ""
+    args.location = "Waterloo+Ontario"
+if str(args.format) == "None":
+    args.format = u"%d %t.0C"
 
-# Get the json data from OpenWeatherMap
-url = "http://api.openweathermap.org/data/2.5/weather?q="+str(args.location)
-data = requests.get(url).content
-decoded = json.loads(data)
-
-# Form the output string
-if args.detailed:
-    output = decoded['weather'][0]['description'].capitalize()
+# Parse the HTML
+html = br.open("https://www.google.ca/search?q=weather+"+args.location).read()
+soup = BeautifulSoup(html, "lxml") 
+description = soup.find('span', id="wob_dc").string
+humidity = soup.find('span', id="wob_hm").string
+precipiation = soup.find('span', id="wob_pp").string
+if args.imperial:
+    temperature = soup.find('span', id="wob_ttm").string
+    windspeed = soup.find('span', id="wob_tws").string
+    windspeed = windspeed.split(' ')[0]
 else:
-    output = decoded['weather'][0]['main']
-if args.temperature:
-    temp = decoded['main']['temp'] - 273.15
-    if args.imperial:
-        temp = temp * 1.8 + 32
-        output += args.separator+args.temptitle+str(round(temp,1))+'F'
-    else:
-        output += args.separator+args.temptitle+str(round(temp,1))+'C'
-if args.windspeed:
-    windspeed = decoded['wind']['speed'] * 3600 / 1000
-    if args.imperial:
-        windspeed = windspeed * 1.61
-        output += args.separator+args.windtitle+str(round(windspeed,1))+'mph'
-    else:
-        output += args.separator+args.windtitle+str(round(windspeed,1))+'kph'
+    temperature = soup.find('span', id="wob_tm").string
+    windspeed = soup.find('span', id="wob_ws").string
+    windspeed = windspeed.split(' ')[0]
+
+# Format and print the output
+output = args.format.decode('utf-8')
+output = output.replace("%d", description)
+output = output.replace("%t", temperature)
+output = output.replace("%h", humidity)
+output = output.replace("%w", windspeed)
+output = output.replace("%p", precipiation)
 print(output)
