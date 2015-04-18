@@ -8,7 +8,7 @@ Dependencies
 getweather is written in python and uses the mechanize, beautifulsoup4, argsparse, and lxml modules.
 If you get an error saying you don't have one of those modules, install it with sudo pip install. ie:
 
-	sudo pip install mechanize && sudo pip install beautifulsoup4 && sudo pip install argsparse && sudo pip install lxml
+	sudo pip install mechanize beautifulsoup4 argsparse lxml
 
 Installation
 ------------
