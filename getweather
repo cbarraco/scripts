@@ -13,7 +13,7 @@ br.set_handle_equiv(True)
 br.set_handle_redirect(True)
 br.set_handle_referer(True)
 br.set_handle_robots(False)
-br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=1)
+br.set_handle_refresh(False)
 br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:36.0) Gecko/20100101 Firefox/36.0')]
 
 # Parse all the arguments
@@ -55,7 +55,7 @@ if str(args.format) == "None":
 
 # Get the HTML
 if str(args.url) == "None":
-    br.open("http://www.accuweather.com")
+    br.open("http://www.accuweather.com",timeout=5.0)
     br.form = list(br.forms())[1]
     control = br.form.find_control("s")
     control.value = args.location
@@ -65,7 +65,7 @@ if str(args.url) == "None":
             break
     html = br.follow_link(link).read()
 else:
-    html = br.open(args.url).read()
+    html = br.open(args.url, timeout=5.0).read()
 
 # Parse the HTML
 soup = BeautifulSoup(html, "lxml")
