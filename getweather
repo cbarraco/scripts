@@ -51,7 +51,7 @@ if str(args.location) == "None" and str(args.url) == "None":
 
 # Set the default format string
 if str(args.format) == "None":
-    args.format = "%d %t %h %p %w"
+    args.format = "%d %t"
 
 # Get the HTML
 if str(args.url) == "None":
