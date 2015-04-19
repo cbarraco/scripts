@@ -18,7 +18,7 @@ Make sure getweather is executable and copy it to /usr/local/bin to access it an
 
 Usage
 -----
-usage: getweather [-h] [-f [FORMAT]] [-l [LOCATION]] [-i]
+usage: getweather [-h] [-f [FORMAT]] [-i] [-l [LOCATION]] [-u [URL]]
 
   -h, --help
   
