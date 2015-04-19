@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 # Init mechanize
 br = mechanize.Browser()
 br.set_handle_equiv(True)
-br.set_handle_gzip(True)
+#br.set_handle_gzip(True)
 br.set_handle_redirect(True)
 br.set_handle_referer(True)
 br.set_handle_robots(False)
@@ -19,50 +19,95 @@ br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:36.0) Gecko/
 # Parse all the arguments
 parser = argparse.ArgumentParser(description='getweather', formatter_class=RawTextHelpFormatter)
 format_help="""Format string for output.
-    %%d - description of current weather (eg:'Light rain')
+    %%d - description of current weather (eg:'Sunny')
     %%t - current temperature (eg: '4')
-    %%w - current wind speed (eg: '5')
+    %%w - current wind speed (eg: '5'). Imperial is in mph and Metric is in kph.
     %%h - current humidity (eg: '90%%')
-    %%p - current chance of precipitation (eg: '50%%')"""
+    %%p - amount of precipitation in the last 24 hours (eg: '5'). Imperial is in inches and Metric is in mm.
+    Default format string is '%%d %%t'."""
 parser.add_argument(
     "-f", "--format",
     nargs='?',
     help=format_help)
 parser.add_argument(
-    "-l", "--location",
-    nargs='?',
-    help="Location of weather data. Default is 'Waterloo+Ontario'. Must be formatted for use in a URL.")
-parser.add_argument(
     "-i", "--imperial",
     help="Set measurement system for all units to imperial. Default is metric.",
     action="store_true")
+parser.add_argument(
+    "-l", "--location",
+    nargs='?',
+    help="Location to get weather data for (eg:'Waterloo Ontario Canada'). This searches accuweather.com for this location and the search result needs to be unique, so specify your city, province/state, and country. The -u command line argument is much faster and is recommended over the -l command line argument.")
+parser.add_argument(
+    "-u", "--url",
+    nargs='?',
+    help="URL to the current weather page on accuweather.com (eg:'http://www.accuweather.com/en/ca/waterloo/n2l/current-weather/55073'). Use this if you want to skip searching for your location (much faster).")
 args = parser.parse_args()
 
-# Set the default values if none were provided
-if str(args.location) == "None":
-    args.location = "Waterloo+Ontario"
+# Show error message if no location data is provided
+if str(args.location) == "None" and str(args.url) == "None":
+    print("\nERROR: Please specify your location using -l or -u command line arguments\n")
+    parser.print_help()
+    exit(1)
+
+# Set the default format string
 if str(args.format) == "None":
-    args.format = u"%d %t"
+    args.format = "%d %t %h %p %w"
+
+# Get the HTML
+if str(args.url) == "None":
+    br.open("http://www.accuweather.com")
+    br.form = list(br.forms())[1]
+    control = br.form.find_control("s")
+    control.value = args.location
+    response = br.submit().read()
+    for link in br.links():
+        if "current" in link.url:
+            break
+    html = br.follow_link(link).read()
+else:
+    html = br.open(args.url).read()
 
 # Parse the HTML
-html = br.open("https://www.google.com/search?q=weather+"+args.location).read()
-soup = BeautifulSoup(html, "lxml") 
-description = soup.find('span', id="wob_dc").string
-humidity = soup.find('span', id="wob_hm").string
-precipiation = soup.find('span', id="wob_pp").string
-if args.imperial:
-    temperature = soup.find('span', id="wob_tm").string
-    windspeed = soup.find('span', id="wob_ws").string
+soup = BeautifulSoup(html, "lxml")
+now = soup.find("div", id="detail-now")
+imperial = "mph" in now.text # check if the site is in imperial
+
+# Get description
+description = now.find('span', "cond").text
+
+# Get temperature and convert it if necessary
+temperature = now.find('span', "temp").text[:-1]
+if imperial and not args.imperial:
+    temperature = str(int((int(temperature) - 32) / 1.8))
+if not imperial and args.imperial:
+    temperature = str(int(int(temperature) * 1.8 + 32))
+
+# Get the humidity
+stats = soup.find("ul", "stats").find_all("strong") # this has a bunch of other stuff in it
+humidity = stats[0].text
+
+# Get the precipitation and convert it if necessary
+precipitation = soup.find_all("div", "feature-stats")[1].find("tr", "last").find("td").text
+if imperial and not args.imperial:
+    precipitation = str(int(precipitation) * 24)
+if not imperial and args.imperial:
+    precipitation = str(int (int(precipitation) / 24))
+
+# Get the wind speed and convert it if necessary
+if imperial:
+    windspeed = now.find_all("div")[-1].text[:-4] # remove ' mph' from the end
+    if not args.imperial:
+        windspeed = str(int(int(windspeed) * 1.60934))
 else:
-    temperature = soup.find('span', id="wob_ttm").string
-    windspeed = soup.find('span', id="wob_tws").string
-windspeed = windspeed.split(' ')[0]
+    windspeed = now.find_all("div")[-1].text[:-5] # remove ' km/h' from the end
+    if args.imperial:
+        windspeed = str(int(int(windspeed) / 1.60934))
 
 # Format and print the output
-output = args.format.decode('utf-8')
+output = args.format
 output = output.replace("%d", description)
 output = output.replace("%t", temperature)
 output = output.replace("%h", humidity)
 output = output.replace("%w", windspeed)
-output = output.replace("%p", precipiation)
+output = output.replace("%p", precipitation)
 print(output)

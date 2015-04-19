@@ -1,7 +1,7 @@
 getweather
 ==========
 
-Gets the current weather conditions from Google
+Gets the current weather conditions from accuweather.com
 
 Dependencies
 ------------
@@ -26,17 +26,27 @@ usage: getweather [-h] [-f [FORMAT]] [-l [LOCATION]] [-i]
   
   -f [FORMAT], --format [FORMAT]
   	
-  	Format string for output.
-        %d - description of current weather (eg:'Light rain')
+  	%d - description of current weather (eg:'Sunny')
         %t - current temperature (eg: '4')
-        %w - current wind speed (eg: '5')
+        %w - current wind speed (eg: '5'). Imperial is in mph and Metric is in kph.
         %h - current humidity (eg: '90%')
-        %p - current chance of precipitation (eg: '50%')
-                            
-  -l [LOCATION], --location [LOCATION]
-  	
-  	Location of weather data. Default is 'Waterloo+Ontario'. Must be formatted for use in a URL.
-  	
+        %p - amount of precipitation in the last 24 hours (eg: '5'). Imperial is in inches and Metric is in mm.
+        Default format string is '%d %t'.
+
   -i, --imperial
   
-  	Set measurement system for all units to imperial. Default is metric.
+  	Set measurement system for all units to imperial. Default is metric.  
+                          
+  -l [LOCATION], --location [LOCATION]
+                        
+	Location to get weather data for (eg:'Waterloo Ontario Canada').
+	Searches accuweather.com for this location; the search result needs to be unique, so specify your city, province/state, and country.
+	The -u command line argument is much faster and is recommended.
+
+  -u [URL], --url [URL]
+
+	URL to the current weather page on accuweather.com (eg:'http://www.accuweather.com/en/ca/waterloo/n2l/current-weather/55073').
+	Use this if you want to skip searching for your location (much faster).
+
+  	
+  
