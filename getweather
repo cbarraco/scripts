@@ -5,6 +5,7 @@ import argparse
 from argparse import RawTextHelpFormatter
 import mechanize
 from bs4 import BeautifulSoup
+from decimal import *
 
 # Init mechanize
 br = mechanize.Browser()
@@ -13,7 +14,7 @@ br.set_handle_equiv(True)
 br.set_handle_redirect(True)
 br.set_handle_referer(True)
 br.set_handle_robots(False)
-br.set_handle_refresh(False)
+br.set_handle_refresh(False) #mechanize._http.HTTPRefreshProcessor(), max_time=1)
 br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:36.0) Gecko/20100101 Firefox/36.0')]
 
 # Parse all the arguments
@@ -89,9 +90,9 @@ humidity = stats[0].text
 # Get the precipitation and convert it if necessary
 precipitation = soup.find_all("div", "feature-stats")[1].find("tr", "last").find("td").text
 if imperial and not args.imperial:
-    precipitation = str(int(precipitation) * 24)
+    precipitation = str(Decimal(precipitation) * 24)
 if not imperial and args.imperial:
-    precipitation = str(int (int(precipitation) / 24))
+    precipitation = str(Decimal(Decimal(precipitation) / 24))
 
 # Get the wind speed and convert it if necessary
 if imperial:
