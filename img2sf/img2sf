@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# generate the image
+TMPFILE="tmp"
+img2xterm "$1" > $TMPFILE
+
+# form the output file
+echo 'startline="0"' > $2
+echo 'fulloutput=(' >> $2
+IFS=''
+cat $TMPFILE |
+while read line
+do
+    printf "\"%s %%s\"\n" "$line" >> $2
+done
+echo ")" >> $2
+
+# clean up
+rm $TMPFILE
