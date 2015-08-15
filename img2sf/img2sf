@@ -1,5 +1,7 @@
 #!/bin/bash
 
+imgw=$(convert -print "%w\n" "$1" /dev/null)
+
 # generate the image
 TMPFILE="tmp"
 img2xterm "$1" > $TMPFILE
@@ -11,9 +13,15 @@ IFS=''
 cat $TMPFILE |
 while read line
 do
-    printf "\"%s %%s\"\n" "$line" >> $2
+    nspaces=$(grep -o " " <<< "$line" | wc -l)
+    nup=$(grep -o "▀" <<< "$line" | wc -l)
+    ndown=$(grep -o "▄" <<< "$line" | wc -l)
+    spaces=$(expr "$imgw" - "$nspaces" - "$nup" - "$ndown")
+    printf "\"%s%${spaces}s %%s\"\n" "$line" "" >> $2
 done
 echo ")" >> $2
+
+sed -i "0,/%s/{s/%s/ %s/}" "$2"
 
 # clean up
 rm $TMPFILE
