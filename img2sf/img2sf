@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ $# -eq 0 ]; then
+    echo -e " \n \t ERROR: No arguments provided"
+    echo -e " \t USAGE: img2sf <path/to/image> <path/to/output>\n"
+    exit 1
+fi
+
 imgw=$(convert -print "%w\n" "$1" /dev/null)
 
 # generate the image
