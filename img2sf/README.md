@@ -15,6 +15,7 @@ If you don't have `img2xterm` you can get it from the AUR or compile it from [so
 
 ## Examples
 Here are some examples of the script in action.
+
 ![Mushroom](mushroom.png)
 
 produces
