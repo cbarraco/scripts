@@ -1,0 +1,29 @@
+#!/bin/python3
+
+import datetime
+
+_BRAILLE_ZERO = 0x2800
+
+# maps bit to the value for braille
+_BRAILLE_MAP1 = [0x40, 0x04, 0x02, 0x01]
+_BRAILLE_MAP2 = [0x80, 0x20, 0x10, 0x08]
+
+# converts a 2 digit number to binary clock form 
+def num2clock(num):
+    d1 = int(num / 10)
+    d2 = int(num % 10)
+    brl = _BRAILLE_ZERO
+    for i in range(4):
+        if (d1 & (2**i)):
+            brl |= _BRAILLE_MAP1[i]
+    for i in range(4):
+        if (d2 & (2**i)):
+            brl |= _BRAILLE_MAP2[i]
+    return brl
+
+result = ""
+now = datetime.datetime.now()
+t = [now.hour, now.minute, now.second]
+for i in t:
+    result += chr(num2clock(i))
+print(result)
