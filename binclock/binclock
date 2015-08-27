@@ -1,5 +1,15 @@
 #!/bin/python3
 
+'''
+binclock
+
+binclock outputs the current time in binary clock format using unicode braille
+characters.
+
+Created Aug 2015 by cbarox
+
+'''
+
 import datetime
 
 _BRAILLE_ZERO = 0x2800
