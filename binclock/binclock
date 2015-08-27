@@ -20,13 +20,11 @@ _BRAILLE_MAP2 = [0x80, 0x20, 0x10, 0x08]
 
 # converts a 2 digit number to binary clock form 
 def num2clock(num):
-    d1 = int(num / 10)
-    d2 = int(num % 10)
+    d1, d2 = int(num / 10), int(num % 10)
     brl = _BRAILLE_ZERO
     for i in range(4):
         if (d1 & (2**i)):
             brl |= _BRAILLE_MAP1[i]
-    for i in range(4):
         if (d2 & (2**i)):
             brl |= _BRAILLE_MAP2[i]
     return brl
