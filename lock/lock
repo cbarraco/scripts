@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# make sure everything that is needed is installed
+command -v convert >/dev/null 2>&1 || { echo >&2 "imagemagick is not installed, aborting"; exit 1; }
+command -v scrot >/dev/null 2>&1 || { echo >&2 "scrot is not installed, aborting"; exit 1; }
+command -v i3lock >/dev/null 2>&1 || { echo >&2 "i3lock is not installed, aborting"; exit 1; }
+
+IMAGE=/tmp/i3lock.png
+
+# get the lock image from script's directory
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+overlay="$DIR/lock.png"
+
+# take the shot
+scrot "${IMAGE}"
+
+# calculate sizes and locations from screenshot dimensions
+width=$(convert -print "%w\n" "${IMAGE}" /dev/null)
+center_x=$(expr ${width} / 2)
+height=$(convert -print "%h\n" "${IMAGE}" /dev/null)
+center_y=$(expr ${height} / 2)
+radius=$(expr ${center_y} + 94)
+
+# set all the colors
+bg_color="363330ff"
+bg_opacity="100%"
+fg_color="c0b18bff"
+wrong_color="d17b49ff"
+
+# pixelate the bg, add circle, and add colorized lock icon 
+convert ${IMAGE} \
+    -scale 20% -scale 500% \
+    -fill \#${bg_color} -strokewidth 16 -stroke \#464340ff \
+    -draw "fill-opacity ${bg_opacity} circle ${center_x},${center_y},${center_x},${radius}" \
+    -gravity center ${overlay} -composite \
+    -fill \#${fg_color} -fuzz 40% -floodfill +${center_x}+${center_y} white \
+    ${IMAGE}
+
+# try to run i3lock-color
+i3lock \
+    --insidevercolor=00000000 --insidewrongcolor=00000000 --insidecolor=00000000 \
+    --ringvercolor=${fg_color} --ringwrongcolor=${wrong_color} --ringcolor=464340ff \
+    --linecolor=00000000 --textcolor=00000000 \
+    --keyhlcolor=${fg_color} --bshlcolor=${wrong_color} \
+    -i "${IMAGE}" > /dev/null
+
+# don't have i3lock-color, fallback to i3lock
+if [ $? -eq 1 ]; then
+    i3lock -u -i "${IMAGE}"
+fi
+
+rm "${IMAGE}"
