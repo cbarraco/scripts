@@ -44,9 +44,4 @@ i3lock \
     --keyhlcolor=${fg_color} --bshlcolor=${wrong_color} \
     -i "${IMAGE}" > /dev/null
 
-# don't have i3lock-color, fallback to i3lock
-if [ $? -eq 1 ]; then
-    i3lock -u -i "${IMAGE}"
-fi
-
 rm "${IMAGE}"
