@@ -8,5 +8,6 @@ Usage:
 
 Example:
 
-```./strerror 1
+```bash
+./strerror 1
 Operation not permitted```
