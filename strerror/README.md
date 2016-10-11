@@ -10,4 +10,5 @@ Example:
 
 ```bash
 ./strerror 1
-Operation not permitted```
+Operation not permitted
+```
