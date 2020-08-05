@@ -1,0 +1,23 @@
+#!/usr/bin/python3
+import sys
+import hashlib
+
+
+# init vars
+s = sys.argv[1]
+
+l = 4
+if len(sys.argv) > 2:
+    l = int(sys.argv[2])
+
+salt = ''
+if len(sys.argv) > 3:
+    salt = sys.argv[3]
+to_encode = s + salt
+
+# compute code
+code = int(hashlib.sha256(to_encode.encode('utf-8')).hexdigest(), 16) % 10 ** l
+
+# print code
+format_str = "{:0" + str(l) + "d}"
+print(format_str.format(code))
