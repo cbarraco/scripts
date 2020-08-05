@@ -1,5 +1,5 @@
 CC           = gcc
-CFLAGS       = 
+CFLAGS       = --std=c89
 RM           = rm -f
 PROGRAM_NAME = strerror
 
