@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+"""GitHub explorer
+
+Searches for repos based on a query and returns their ssh url
+
+Can be fed into fzf, git, and xargs for interactive git cloning
+
+Example: ghex "silver searcher ag" | fzf | xargs git clone
+
+"""
+
+import sys
+import configparser
+from pathlib import Path
+
+from github import Github
+
+cp = configparser.ConfigParser()
+CONFIG_PATH = str(Path.home()) + '/.config/ghex.conf'
+cp.read(CONFIG_PATH)
+username = cp['credentials']['username']
+password = cp['credentials']['password']
+
+g = Github(username, password)
+
+if len(sys.argv) < 2:
+    sys.exit(1)
+
+repos = g.search_repositories(query=sys.argv[1])
+for repo in repos:
+    print(repo.ssh_url)
