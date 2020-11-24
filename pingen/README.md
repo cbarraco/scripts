@@ -1,5 +1,5 @@
 == pingen ==
-Repeatably generates the same n-digit pin from any string with optional salt. Basically a SHA256 hash code generator but the output is a zero padded integer modulo 10^n. The idea is that if you forget the pin you can regenerate it if you can remember the text that was used which should be easy.
+Repeatably generates the same n-digit pin from any string with optional salt. Basically a SHA256 hash code generator but the output is a zero padded integer modulo 10^n. The idea is that if you forget the pin you can regenerate it if you can remember the text that was used which should be easy. Also handy for generating ports for Docker containers using the container name as the text.
 
 Default pin length is 4 and default salt is empty string
 
