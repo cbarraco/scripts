@@ -25,3 +25,9 @@ output: `730078`
 `python3 ./pingen "My front door" 8 "password123"`
 
 output: `46151784`
+
+### Generate a port number for my rabbitmq Docker container
+
+`python3 ./pingen "rabbitmq"`
+
+output: `5975`
