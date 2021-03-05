@@ -14,7 +14,7 @@ import sys
 import configparser
 from pathlib import Path
 
-from github import Github
+import github3
 
 cp = configparser.ConfigParser()
 CONFIG_PATH = str(Path.home()) + '/.config/ghex.conf'
@@ -22,11 +22,13 @@ cp.read(CONFIG_PATH)
 username = cp['credentials']['username']
 password = cp['credentials']['password']
 
-g = Github(username, password)
+github = github3.login(username=username, password=password)
 
 if len(sys.argv) < 2:
     sys.exit(1)
 
-repos = g.search_repositories(query=sys.argv[1])
+query = sys.argv[1]
+
+repos = github.search_repositories(query=query)
 for repo in repos:
-    print(repo.ssh_url)
+    print(getattr(repo, "ssh_url"))
