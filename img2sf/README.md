@@ -16,25 +16,25 @@ If you don't have `img2xterm` you can get it from the AUR or compile it from [so
 ## Examples
 Here are some examples of the script in action.
 
-![Mushroom](scrots/mushroom.png)
+![Mushroom](examples/mushroom.png)
 
 produces
 
 ![Mushroom Scrot](scrots/mushroom-scrot.png)
 
-![Goomba](goomba.gif)
+![Goomba](examples/goomba.gif)
 
 produces
 
 ![Goomba Scrot](scrots/goomba-scrot.png)
 
-![Mario](mario.gif)
+![Mario](examples/mario.gif)
 
 produces
 
 ![Mario Scrot](scrots/mario-scrot.png)
 
-![Luigi](luigi.gif)
+![Luigi](examples/luigi.gif)
 
 produces
 
